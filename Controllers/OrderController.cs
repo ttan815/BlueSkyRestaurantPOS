@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BlueSkyChineseRestaurantPOS.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BlueSkyChineseRestaurantPOS.Controllers
 {
     [ApiController]
-    [Route("[order]")]
+    [Route("/[controller]")]
     public class OrderController : ControllerBase
     {
-        public IActionResult Index()
+        [HttpPost]
+        public IActionResult ProcessOrder([FromBody] OrderModel order)
         {
-            return View();
+            Console.WriteLine(order);
+            return Ok(order);
         }
     }
 }
