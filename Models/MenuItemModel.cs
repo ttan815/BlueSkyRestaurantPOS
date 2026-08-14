@@ -7,7 +7,6 @@ namespace BlueSkyChineseRestaurantPOS.Models
         public string? ChineseItemName { get; set; }
         public decimal Price { get; set; }
         public int OrderedAmount { get; set; }
-
         public List<MenuItemOption> MenuItemCustomization { get; set; } = new List<MenuItemOption>();
         
     }

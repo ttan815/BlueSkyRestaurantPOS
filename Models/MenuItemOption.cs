@@ -4,7 +4,6 @@
     {
         public int Id { get; set; }
         public string Modification { get; set; } // Add, More, No, Less...
-
         public string ModificationName { get; set; }
         public string ModificationChineseName { get; set; }
         public decimal PriceChange { get; set; }

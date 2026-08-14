@@ -21,7 +21,9 @@ function MainMenu() {
 
     }
     function NavigateToTakeOut() {
-        navigate("/Takeout")
+        navigate("/Takeout", {
+            state: { phoneNumber }
+        });
     }
     return (
         <>
