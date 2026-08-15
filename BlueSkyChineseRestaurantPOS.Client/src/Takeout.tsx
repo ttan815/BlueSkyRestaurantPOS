@@ -32,9 +32,40 @@ function Takeout() {
     }
 
     const [orderedItems, setOrderedItems] = useState<foodItemConstruct[]>([]);
-    const [itemCustomization, setItemCustomization] = useState([])
+    const [itemCustomization, setItemCustomization] = useState<itemCustomizationConstruct[]>([])
     const phoneNumber = location.state?.phoneNumber;
     const [selectedItemID, setSelectedItemID] = useState(-999);
+    const [modifyItemScreenStatus, setModifyItemScreenStatus] = useState(false);
+
+
+    // Modification Menu Variables
+    const [isUsingPrefix, setIsUsingPrefix] = useState(false)
+    const [activeModifierPrefix, setActiveModifierPrefix] = useState("")
+    const [activeModifierOption, setActiveModiferOption] = useState("")
+    function manipulatePrefixModifier(prefix: string = "") {
+        if (prefix == "") {
+            return;
+        }
+        if (prefix == activeModifierPrefix) {
+            setActiveModifierPrefix("");
+        }
+        else {
+            setActiveModifierPrefix(prefix);
+        }
+    }
+
+    // Going to have this fix, since person should be able to click on multiple modifiers, this only allows one so far.
+    function manipulateModifier(modificationOption: string = "") {
+        if (modificationOption == "") {
+            return;
+        }
+        if (modificationOption == activeModifierOption) {
+            setActiveModiferOption("");
+        }
+        else {
+            setActiveModiferOption(modificationOption);
+        }
+    }
     function addFoodToOrder(foodName: string, foodPrice: number) {
         var newID = itemID + 1;
         setItemID(newID);
@@ -53,6 +84,19 @@ function Takeout() {
     }
     function setSelectedItem(id: number) {
         setSelectedItemID(id);
+    }
+
+    function modifySelectedItem() {
+        const selectedItem = orderedItems.find(item => item.id === selectedItemID)
+        if (selectedItem === null) {
+            console.log("Error: selected item to modify does not exist.");
+            return;
+        }
+        if (selectedItem) {
+            setModifyItemScreenStatus(true)
+        }
+
+
     }
     const order = {
         orderTime: new Date().toISOString(),
@@ -74,9 +118,10 @@ function Takeout() {
     return (
         <>
             <div className="order-options">
-                <button>
+                <button onClick={() => modifySelectedItem()} >
                     Modify
                 </button>
+
                 <button>
                     To Go
                 </button>
@@ -90,37 +135,91 @@ function Takeout() {
                     Payment
                 </button>
             </div>
-            <div className="item-list-div">
-                {orderedItems.map(item =>
-                    <div>
-                        {selectedItemID === item.id ? 
-                        
-                            <button onClick={() => setSelectedItem(item.id)} className="selected-food-item-button">
-                                <div key={item.id} >{item.itemName}</div>
-                            </button>
-                            :
-                            <button key={item.id} onClick={() => setSelectedItem(item.id)} className="default-food-item-button">
-                                <div>{item.itemName}</div>
-                            </button>
-                        }
-                        {
-                            item.menuItemCustomization.map(customization =>
-                                <div>
-                                    <button>
-                                        <p>{customization.modification}</p>
-                                        <p>{customization.modificationName}</p>
-                                        <p>{customization.modificationChineseName}</p>
-                                        <p>{customization.priceChange}</p>
-                                        <p>{customization.description}</p>
-                                    </button>
-                                </div>)
+            <div className={"main-layout"} >
+                <div className="item-list-div left-container">
+                    {orderedItems.map(item =>
+                        <div>
+                            {selectedItemID === item.id ?
 
-                        }
+                                <button onClick={() => setSelectedItem(item.id)} className="selected-food-item-button">
+                                    <div key={item.id} >{item.itemName}</div>
+                                </button>
+                                :
+                                <button key={item.id} onClick={() => setSelectedItem(item.id)} className="default-food-item-button">
+                                    <div>{item.itemName}</div>
+                                </button>
+                            }
+                            {
+                                item.menuItemCustomization.map(customization =>
+                                    <div>
+                                        <button>
+                                            <p>{customization.modification}</p>
+                                            <p>{customization.modificationName}</p>
+                                            <p>{customization.modificationChineseName}</p>
+                                            <p>{customization.priceChange}</p>
+                                            <p>{customization.description}</p>
+                                        </button>
+                                    </div>)
+
+                            }
+                        </div>
+                    )}
                 </div>
-                )}
-            </div>
-            <div>
-                <button key={918273} onClick={()=>addFoodToOrder("Orange Chicken", 15)} >Orange Chicken</button>
+                {modifyItemScreenStatus ?
+                    <div className={"right-container"} >
+                        <div>
+                            <h1>Modifications</h1>
+                        </div>
+                        <div className="modifier-list">
+                            {itemCustomization.map(modificationAddition =>
+                                <div>
+                                    {modificationAddition.modification + " " + modificationAddition.modificationName}
+                                    {modificationAddition.priceChange}
+                                </div>)}
+                        </div>
+                        <div>
+                            <button>X</button>
+                        </div>
+                        <div>
+                            <div>
+                                {activeModifierOption === "Spicy"
+                                    ? <button className="selected-food-item-button" onClick={() => manipulateModifier("Spicy")}>Spicy</button>
+                                    : <button onClick={() => manipulateModifier("Spicy")}>Spicy</button>
+                                }
+
+                                {activeModifierOption === "Salt"
+                                    ? <button className="selected-food-item-button" onClick={() => manipulateModifier("Salt")}>Salt</button>
+                                    : <button onClick={() => manipulateModifier("Salt")}>Salt</button>
+                                }
+
+                                {activeModifierOption === "Fried"
+                                    ? <button className="selected-food-item-button" onClick={() => manipulateModifier("Fried")}>Fried</button>
+                                    : <button onClick={() => manipulateModifier("Fried")}>Fried</button>
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            {activeModifierPrefix === "Add"
+                                ? <button className="selected-food-item-button" onClick={() => manipulatePrefixModifier("Add")}>Add</button>
+                                : <button onClick={() => manipulatePrefixModifier("Add")}>Add</button>
+                            }
+
+                            {activeModifierPrefix === "No"
+                                ? <button className="selected-food-item-button" onClick={() => manipulatePrefixModifier("No")}>No</button>
+                                : <button onClick={() => manipulatePrefixModifier("No")}>No</button>
+                            }
+
+                            {activeModifierPrefix === "ONLY"
+                                ? <button className="selected-food-item-button" onClick={() => manipulatePrefixModifier("ONLY")}>ONLY</button>
+                                : <button onClick={() => manipulatePrefixModifier("ONLY")}>ONLY</button>
+                            }
+                        </div>
+                    </div> :
+
+                    <div className={"right-container"} >
+                        <button key={918273} onClick={() => addFoodToOrder("Orange Chicken", 15)} >Orange Chicken</button>
+                    </div>
+                }
             </div>
             <h1>{phoneNumber}</h1>
         </>

@@ -19,3 +19,15 @@ button{
     width: 150px;
     height: 150px;
 }
+
+.main-layout{
+    display: flex;
+    width: 100%;
+}
+
+.left-container{
+    flex: 45;
+}
+.right-container{
+    flex: 55;
+}
