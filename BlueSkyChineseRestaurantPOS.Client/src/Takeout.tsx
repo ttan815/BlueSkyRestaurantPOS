@@ -16,6 +16,7 @@ function Takeout() {
     const [tax, setTax] = useState(.0875)
     const [total, setTotal] = useState(0)
     interface itemCustomizationConstruct {
+        id: number,
         modification: string,
         modificationName: string,
         modificationChineseName: string,
@@ -41,7 +42,8 @@ function Takeout() {
     // Modification Menu Variables
     const [isUsingPrefix, setIsUsingPrefix] = useState(false)
     const [activeModifierPrefix, setActiveModifierPrefix] = useState("")
-    const [activeModifierOption, setActiveModiferOption] = useState("")
+    const [modificationID, setModificationID] = useState(0)
+    // const [activeModifierOption, setActiveModiferOption] = useState("")
     function manipulatePrefixModifier(prefix: string = "") {
         if (prefix == "") {
             return;
@@ -55,15 +57,63 @@ function Takeout() {
     }
 
     // Going to have this fix, since person should be able to click on multiple modifiers, this only allows one so far.
+    // Have a list of all the modifications, manipulate modifer, will check that list, adding and removing from it when necessary.
     function manipulateModifier(modificationOption: string = "") {
+
+        // interface itemCustomizationConstruct {
+        //     id: number,
+        //     modification: string,
+        //     modificationName: string,
+        //     modificationChineseName: string,
+        //     priceChange: number,
+        //     description: string
+        // }
+        const modifierObj = itemCustomization.find(
+            item => item.modificationName === modificationOption
+        );
+
+        if (modifierObj) {
+            setItemCustomization(
+                itemCustomization.filter(
+                    item => item.id !== modifierObj.id
+                )
+            );
+            return
+        }
+        if (modificationOption != "" && activeModifierPrefix != "") {
+            var idForObj = modificationID;
+            setModificationID((idForObj + 1))
+            const itemCustomizationObject :itemCustomizationConstruct = {
+                id: idForObj,
+                modification: activeModifierPrefix,
+                modificationName: modificationOption,
+                modificationChineseName: "?",
+                priceChange: 0.00,
+                description: ""
+            }
+            setItemCustomization(([...itemCustomization, itemCustomizationObject]))
+            setActiveModifierPrefix("")
+            return
+
+        }
+        if (modificationOption != "") {
+            var idForObj = modificationID;
+            setModificationID((idForObj + 1))
+            const itemCustomizationObject: itemCustomizationConstruct = {
+                id: idForObj,
+                modification: "",
+                modificationName: modificationOption,
+                modificationChineseName: "?",
+                priceChange: 0.00,
+                description: ""
+            }
+            setItemCustomization(([...itemCustomization, itemCustomizationObject]))
+            setActiveModifierPrefix("")
+            return
+
+        }
         if (modificationOption == "") {
             return;
-        }
-        if (modificationOption == activeModifierOption) {
-            setActiveModiferOption("");
-        }
-        else {
-            setActiveModiferOption(modificationOption);
         }
     }
     function addFoodToOrder(foodName: string, foodPrice: number) {
@@ -174,7 +224,7 @@ function Takeout() {
                             {itemCustomization.map(modificationAddition =>
                                 <div>
                                     {modificationAddition.modification + " " + modificationAddition.modificationName}
-                                    {modificationAddition.priceChange}
+                                    {/* {modificationAddition.priceChange} */}
                                 </div>)}
                         </div>
                         <div>
@@ -182,17 +232,17 @@ function Takeout() {
                         </div>
                         <div>
                             <div>
-                                {activeModifierOption === "Spicy"
+                                {itemCustomization.some(item => item.modificationName === "Spicy")
                                     ? <button className="selected-food-item-button" onClick={() => manipulateModifier("Spicy")}>Spicy</button>
                                     : <button onClick={() => manipulateModifier("Spicy")}>Spicy</button>
                                 }
 
-                                {activeModifierOption === "Salt"
+                                {itemCustomization.some(item => item.modificationName === "Salt")
                                     ? <button className="selected-food-item-button" onClick={() => manipulateModifier("Salt")}>Salt</button>
                                     : <button onClick={() => manipulateModifier("Salt")}>Salt</button>
                                 }
 
-                                {activeModifierOption === "Fried"
+                                {itemCustomization.some(item => item.modificationName === "Fried")
                                     ? <button className="selected-food-item-button" onClick={() => manipulateModifier("Fried")}>Fried</button>
                                     : <button onClick={() => manipulateModifier("Fried")}>Fried</button>
                                 }
