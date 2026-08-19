@@ -129,7 +129,6 @@ function Takeout() {
                 return {
                     ...item,
                     menuItemCustomization: [
-                        ...item.menuItemCustomization,
                         ...itemCustomization
                     ]
                 };
@@ -179,6 +178,7 @@ function Takeout() {
         }
         if (selectedItem) {
             setModifyItemScreenStatus(true)
+            setItemCustomization(selectedItem.menuItemCustomization)
         }
 
 
