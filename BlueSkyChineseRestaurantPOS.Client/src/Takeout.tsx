@@ -35,7 +35,9 @@ function Takeout() {
     const [orderedItems, setOrderedItems] = useState<foodItemConstruct[]>([]);
     const [itemCustomization, setItemCustomization] = useState<itemCustomizationConstruct[]>([])
     const phoneNumber = location.state?.phoneNumber;
+
     const [selectedItemID, setSelectedItemID] = useState(-999);
+
     const [modifyItemScreenStatus, setModifyItemScreenStatus] = useState(false);
 
 
@@ -116,6 +118,29 @@ function Takeout() {
             return;
         }
     }
+    function confirmModification() {
+        const foodItemObj = orderedItems.find(item => item.id === selectedItemID)
+        if (!foodItemObj) {
+            setSelectedItemID(-999)
+            return
+        }
+        const newOrderedItems = orderedItems.map(item => {
+            if (item.id === selectedItemID) {
+                return {
+                    ...item,
+                    menuItemCustomization: [
+                        ...item.menuItemCustomization,
+                        ...itemCustomization
+                    ]
+                };
+            }
+            return item
+        })
+        setOrderedItems(newOrderedItems)
+        setModifyItemScreenStatus(false)
+        setItemCustomization([])
+        setSelectedItem(-999)
+    }
     function addFoodToOrder(foodName: string, foodPrice: number) {
         var newID = itemID + 1;
         setItemID(newID);
@@ -133,6 +158,16 @@ function Takeout() {
         setItemID(newID);
     }
     function setSelectedItem(id: number) {
+        if (id == -999) {
+            setSelectedItemID(-999)
+        }
+        if (selectedItemID != -999 && id == selectedItemID && modifyItemScreenStatus == false) {
+            setSelectedItemID(-999)
+            return
+        }
+        if (selectedItemID != -999 && id != selectedItemID && modifyItemScreenStatus){
+            return
+        }
         setSelectedItemID(id);
     }
 
@@ -171,7 +206,6 @@ function Takeout() {
                 <button onClick={() => modifySelectedItem()} >
                     Modify
                 </button>
-
                 <button>
                     To Go
                 </button>
@@ -188,21 +222,21 @@ function Takeout() {
             <div className={"main-layout"} >
                 <div className="item-list-div left-container">
                     {orderedItems.map(item =>
-                        <div>
+                        <div key={item.id} >
                             {selectedItemID === item.id ?
 
                                 <button onClick={() => setSelectedItem(item.id)} className="selected-food-item-button">
                                     <div key={item.id} >{item.itemName}</div>
                                 </button>
                                 :
-                                <button key={item.id} onClick={() => setSelectedItem(item.id)} className="default-food-item-button">
+                                <button onClick={() => setSelectedItem(item.id)} className="default-food-item-button">
                                     <div>{item.itemName}</div>
                                 </button>
                             }
                             {
                                 item.menuItemCustomization.map(customization =>
-                                    <div>
-                                        <button>
+                                    <div key={customization.id}>
+                                        <button >
                                             <p>{customization.modification}</p>
                                             <p>{customization.modificationName}</p>
                                             <p>{customization.modificationChineseName}</p>
@@ -222,7 +256,7 @@ function Takeout() {
                         </div>
                         <div className="modifier-list">
                             {itemCustomization.map(modificationAddition =>
-                                <div>
+                                <div key={modificationAddition.id } >
                                     {modificationAddition.modification + " " + modificationAddition.modificationName}
                                     {/* {modificationAddition.priceChange} */}
                                 </div>)}
@@ -263,6 +297,9 @@ function Takeout() {
                                 ? <button className="selected-food-item-button" onClick={() => manipulatePrefixModifier("ONLY")}>ONLY</button>
                                 : <button onClick={() => manipulatePrefixModifier("ONLY")}>ONLY</button>
                             }
+                        </div>
+                        <div>
+                            <button onClick={confirmModification}>Confirm</button>
                         </div>
                     </div> :
 
