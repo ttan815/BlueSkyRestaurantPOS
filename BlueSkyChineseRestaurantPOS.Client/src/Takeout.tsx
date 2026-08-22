@@ -14,6 +14,7 @@ function Takeout() {
     const [discountConstant, setDiscountConstant] = useState(0)
     const [subtotal, setSubtotal] = useState(0)
     const [tax, setTax] = useState(.0875)
+    const [taxAmount, setTaxAmount] = useState(0)
     const [total, setTotal] = useState(0)
     interface itemCustomizationConstruct {
         id: number,
@@ -30,6 +31,7 @@ function Takeout() {
         price: number,
         orderedAmount: number,
         menuItemCustomization: itemCustomizationConstruct[]
+        toGo: boolean
     }
 
     const [orderedItems, setOrderedItems] = useState<foodItemConstruct[]>([]);
@@ -40,7 +42,16 @@ function Takeout() {
 
     const [modifyItemScreenStatus, setModifyItemScreenStatus] = useState(false);
 
-
+    useEffect(() => {
+        var newTotal = 0
+        for (const obj of orderedItems) {
+            newTotal += obj.price
+        }
+        setSubtotal(newTotal)
+        var totalWithTax = newTotal + (newTotal * tax)
+        setTaxAmount((newTotal * tax))
+        setTotal(totalWithTax)
+    }, [orderedItems])
     // Modification Menu Variables
     const [isUsingPrefix, setIsUsingPrefix] = useState(false)
     const [activeModifierPrefix, setActiveModifierPrefix] = useState("")
@@ -149,8 +160,8 @@ function Takeout() {
             chineseItemname: "?",
             price: foodPrice,
             orderedAmount: itemCount,
-            menuItemCustomization: itemCustomization
-
+            menuItemCustomization: itemCustomization,
+            toGo: false
         }
         setOrderedItems([...orderedItems, foodItem]);
         newID = itemID + 1;
@@ -180,17 +191,26 @@ function Takeout() {
             setModifyItemScreenStatus(true)
             setItemCustomization(selectedItem.menuItemCustomization)
         }
-
-
     }
     const order = {
         orderTime: new Date().toISOString(),
         orderList: orderedItems,
         discountPercent: discountPercent,
         discountConstant: discountConstant,
-        subtotal: 0,
+        subtotal: subtotal,
         tax: tax,
         total: total
+    }
+
+    async function printOrder() {
+        const response = await fetch("https://localhost:7126/api/order", {
+            method: 'POST',
+            body: JSON.stringify(order),
+            headers: { 'Content-Type': 'application/json' }
+        })
+        const message = await response.text();
+
+        console.log(message);
     }
     if (!phoneNumber) {
         return (
@@ -212,7 +232,7 @@ function Takeout() {
                 <button>
                     Split
                 </button>
-                <button>
+                <button onClick={printOrder} >
                     Print
                 </button>
                 <button>
@@ -248,6 +268,12 @@ function Takeout() {
                             }
                         </div>
                     )}
+                    <div>
+                        Discount {discountConstant ? discountConstant : discountPercent}
+                        Subtotal {subtotal}
+                        Tax: {tax}
+                        Total {total}
+                    </div>
                 </div>
                 {modifyItemScreenStatus ?
                     <div className={"right-container"} >

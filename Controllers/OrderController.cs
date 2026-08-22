@@ -4,14 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace BlueSkyChineseRestaurantPOS.Controllers
 {
     [ApiController]
-    [Route("/[controller]")]
+    [Route("api/[controller]")]
     public class OrderController : ControllerBase
     {
         [HttpPost]
-        public IActionResult ProcessOrder([FromBody] OrderModel order)
+        public async Task<ActionResult> Order(OrderModel order)
         {
-            Console.WriteLine(order);
-            return Ok(order);
+            foreach(MenuItemModel customerOrder in order.OrderList)
+            {
+                Console.WriteLine(customerOrder.ItemName);
+            }
+            return Ok();
         }
     }
 }
