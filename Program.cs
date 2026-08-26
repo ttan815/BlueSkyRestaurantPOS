@@ -1,5 +1,12 @@
-var builder = WebApplication.CreateBuilder(args);
+using BlueSkyChineseRestaurantPOS.Data;
+using Microsoft.EntityFrameworkCore;
 
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<PosDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    )
+);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 var MyAllowSpecificOrigins = "AllowReactFrontEnd";
