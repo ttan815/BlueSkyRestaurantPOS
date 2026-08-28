@@ -1,6 +1,6 @@
 ﻿namespace BlueSkyChineseRestaurantPOS.Models
 {
-    public class CustomerOrderItemCustomization
+    public class CustomerOrderItemCustomizationModel
     {
         public int Id { get; set; }
         public int CustomerOrderItemId { get; set; }

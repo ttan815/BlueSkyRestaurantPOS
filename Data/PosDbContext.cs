@@ -8,6 +8,7 @@ namespace BlueSkyChineseRestaurantPOS.Data
 
         public DbSet<CustomerOrderModel> Orders { get; set; }
         public DbSet<CustomerOrderItemModel> OrderItems { get; set; }
-        public DbSet<CustomerOrderItemCustomization> OrderItemCustomizations { get; set; }
+        public DbSet<CustomerOrderItemCustomizationModel> OrderItemCustomizations { get; set; }
+        public DbSet<MenuItemModel> MenuItems { get; set; }
     }
 }

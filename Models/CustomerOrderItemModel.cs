@@ -9,7 +9,7 @@
         public decimal Price { get; set; } = decimal.Zero;
         public int OrderedAmount { get; set; }
         public CustomerOrderModel CustomerOrder { get; set; } = null!;
-        public List<CustomerOrderItemCustomization> MenuItemCustomizations { get; set; } = new();
+        public List<CustomerOrderItemCustomizationModel> MenuItemCustomizations { get; set; } = new();
         public Boolean ToGo { get; set; }
 
     }

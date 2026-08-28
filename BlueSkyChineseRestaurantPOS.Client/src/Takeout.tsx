@@ -212,6 +212,14 @@ function Takeout() {
 
         console.log(message);
     }
+    async function getMenu() {
+        const response = await fetch("https://localhost:7126/api/menu", {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        })
+        const message = await response.text()
+        console.log(message)
+    }
     if (!phoneNumber) {
         return (
             <>
@@ -229,7 +237,7 @@ function Takeout() {
                 <button>
                     To Go
                 </button>
-                <button>
+                <button onClick={getMenu} >
                     Split
                 </button>
                 <button onClick={printOrder} >
