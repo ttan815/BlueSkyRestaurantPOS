@@ -5,17 +5,28 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
+import CategoryItem from "./components/CategoryItems"
 function Takeout() {
     const location = useLocation()
     const navigate = useNavigate()
     const [itemCount, setItemCount] = useState(1)
     const [itemID, setItemID] = useState(0) // Temporary until IDs appear from DB
     const [discountPercent, setDiscountPercent] = useState(0)
-    const [discountConstant, setDiscountConstant] = useState(0)
+    const [discountConstant, setDiscountConstant] = useState()
     const [subtotal, setSubtotal] = useState(0)
     const [tax, setTax] = useState(.0875)
     const [taxAmount, setTaxAmount] = useState(0)
     const [total, setTotal] = useState(0)
+
+    const [entireMenu, setEntireMenu] = useState<Record<string,foodInfo[]>>()
+    const [foodCategories, setFoodCategories] = useState<string[]>([])
+    interface foodInfo {
+        category: string,
+        chineseItemName: string,
+        id: number,
+        itemName: string,
+        price: number
+    }
     interface itemCustomizationConstruct {
         id: number,
         modification: string,
@@ -52,10 +63,14 @@ function Takeout() {
         setTaxAmount((newTotal * tax))
         setTotal(totalWithTax)
     }, [orderedItems])
+    useEffect(() => {
+        getMenu()
+    }, [])
     // Modification Menu Variables
     const [isUsingPrefix, setIsUsingPrefix] = useState(false)
     const [activeModifierPrefix, setActiveModifierPrefix] = useState("")
     const [modificationID, setModificationID] = useState(0)
+    const [activeCategory, setActiveCategory] = useState(foodCategories[0] )
     // const [activeModifierOption, setActiveModiferOption] = useState("")
     function manipulatePrefixModifier(prefix: string = "") {
         if (prefix == "") {
@@ -96,7 +111,7 @@ function Takeout() {
         if (modificationOption != "" && activeModifierPrefix != "") {
             var idForObj = modificationID;
             setModificationID((idForObj + 1))
-            const itemCustomizationObject :itemCustomizationConstruct = {
+            const itemCustomizationObject: itemCustomizationConstruct = {
                 id: idForObj,
                 modification: activeModifierPrefix,
                 modificationName: modificationOption,
@@ -175,7 +190,7 @@ function Takeout() {
             setSelectedItemID(-999)
             return
         }
-        if (selectedItemID != -999 && id != selectedItemID && modifyItemScreenStatus){
+        if (selectedItemID != -999 && id != selectedItemID && modifyItemScreenStatus) {
             return
         }
         setSelectedItemID(id);
@@ -212,14 +227,21 @@ function Takeout() {
 
         console.log(message);
     }
+
     async function getMenu() {
         const response = await fetch("https://localhost:7126/api/menu", {
             method: 'GET',
-            headers: {'Content-Type': 'application/json'}
+            headers: { 'Content-Type': 'application/json' }
         })
-        const message = await response.text()
-        console.log(message)
+        let message:Record<string, foodInfo[]> = await response.json()
+        setEntireMenu(message)
+        const keys = Object.keys(message)
+        setFoodCategories(keys)
+
+        console.log(message["Poultry"][0].itemName)
+        console.log(keys)
     }
+
     if (!phoneNumber) {
         return (
             <>
@@ -290,7 +312,7 @@ function Takeout() {
                         </div>
                         <div className="modifier-list">
                             {itemCustomization.map(modificationAddition =>
-                                <div key={modificationAddition.id } >
+                                <div key={modificationAddition.id} >
                                     {modificationAddition.modification + " " + modificationAddition.modificationName}
                                     {/* {modificationAddition.priceChange} */}
                                 </div>)}
@@ -338,7 +360,42 @@ function Takeout() {
                     </div> :
 
                     <div className={"right-container"} >
-                        <button key={918273} onClick={() => addFoodToOrder("Orange Chicken", 15)} >Orange Chicken</button>
+                        <button key={918273} onClick={() => addFoodToOrder("Orange Chicken", 15)}>Orange Chicken</button>
+                        <div>
+                            {foodCategories.map((category) =>
+                                <>
+{/*                                 interface CategoryItemProp {
+    orderedItems: foodItemConstruct[]
+    setOrderedItems: React.Dispatch<React.SetStateAction<foodItemConstruct[]>>
+    arrayOfFood: foodItemInfo[]
+} */}
+                                    {activeCategory === category && entireMenu ?
+                                        <CategoryItem
+                                            orderedItems={orderedItems}
+                                            setOrderedItems={setOrderedItems}
+                                            arrayOfFood={entireMenu[category]}
+                                        />
+                                        :
+                                        <></>}
+                                </>
+
+                            )}
+                        </div>
+                        <div className="category-container">
+                            {foodCategories.map((category) =>
+                                <>
+                                    {activeCategory === category ?
+                                        <button className="selected-food-item-button">
+                                            {category}
+                                        </button>
+                                        :
+                                        <button onClick={() => setActiveCategory(category)} >
+                                            {category}
+                                        </button>}
+                                </>
+
+                            )}
+                        </div>
                     </div>
                 }
             </div>

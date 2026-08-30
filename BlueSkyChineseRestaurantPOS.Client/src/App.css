@@ -31,3 +31,8 @@ button{
 .right-container{
     flex: 55;
 }
+.category-container{
+    height: 150px;
+    flex-shrink: 0;
+    margin-top: auto;
+}
