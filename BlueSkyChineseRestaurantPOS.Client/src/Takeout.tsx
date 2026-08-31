@@ -16,7 +16,7 @@ function Takeout() {
     const [subtotal, setSubtotal] = useState(0)
     const [tax, setTax] = useState(.0875)
     const [taxAmount, setTaxAmount] = useState(0)
-    const [total, setTotal] = useState(0)
+    const [total, setTotal] = useState<number>(0)
 
     const [entireMenu, setEntireMenu] = useState<Record<string,foodInfo[]>>()
     const [foodCategories, setFoodCategories] = useState<string[]>([])
@@ -60,8 +60,9 @@ function Takeout() {
         }
         setSubtotal(newTotal)
         var totalWithTax = newTotal + (newTotal * tax)
+        var roundedTotalWithTax = totalWithTax.toFixed(2)
         setTaxAmount((newTotal * tax))
-        setTotal(totalWithTax)
+        setTotal(Number(roundedTotalWithTax))
     }, [orderedItems])
     useEffect(() => {
         getMenu()
@@ -70,7 +71,7 @@ function Takeout() {
     const [isUsingPrefix, setIsUsingPrefix] = useState(false)
     const [activeModifierPrefix, setActiveModifierPrefix] = useState("")
     const [modificationID, setModificationID] = useState(0)
-    const [activeCategory, setActiveCategory] = useState(foodCategories[0] )
+    const [activeCategory, setActiveCategory] = useState("")
     // const [activeModifierOption, setActiveModiferOption] = useState("")
     function manipulatePrefixModifier(prefix: string = "") {
         if (prefix == "") {
@@ -237,7 +238,8 @@ function Takeout() {
         setEntireMenu(message)
         const keys = Object.keys(message)
         setFoodCategories(keys)
-
+        setActiveCategory(keys[0])
+        console.log(activeCategory)
         console.log(message["Poultry"][0].itemName)
         console.log(keys)
     }
@@ -299,9 +301,9 @@ function Takeout() {
                         </div>
                     )}
                     <div>
-                        Discount {discountConstant ? discountConstant : discountPercent}
+                        Discount {discountConstant ? discountConstant : <div>{discountPercent}%</div>}
                         Subtotal {subtotal}
-                        Tax: {tax}
+                        Tax: {tax * 100}%
                         Total {total}
                     </div>
                 </div>
@@ -360,20 +362,15 @@ function Takeout() {
                     </div> :
 
                     <div className={"right-container"} >
-                        <button key={918273} onClick={() => addFoodToOrder("Orange Chicken", 15)}>Orange Chicken</button>
                         <div>
                             {foodCategories.map((category) =>
                                 <>
-{/*                                 interface CategoryItemProp {
-    orderedItems: foodItemConstruct[]
-    setOrderedItems: React.Dispatch<React.SetStateAction<foodItemConstruct[]>>
-    arrayOfFood: foodItemInfo[]
-} */}
                                     {activeCategory === category && entireMenu ?
                                         <CategoryItem
                                             orderedItems={orderedItems}
                                             setOrderedItems={setOrderedItems}
                                             arrayOfFood={entireMenu[category]}
+                                            addFoodToOrder={addFoodToOrder}
                                         />
                                         :
                                         <></>}

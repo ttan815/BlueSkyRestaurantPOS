@@ -28,13 +28,15 @@ interface CategoryItemProp {
     orderedItems: foodItemConstruct[]
     setOrderedItems: React.Dispatch<React.SetStateAction<foodItemConstruct[]>>
     arrayOfFood: foodItemInfo[]
+    addFoodToOrder: (name: string, price: number) =>void
 }
-function CategoryItem({ orderedItems, setOrderedItems, arrayOfFood }: CategoryItemProp) {
+
+function CategoryItem({ orderedItems, setOrderedItems, arrayOfFood, addFoodToOrder }: CategoryItemProp) {
     return <>
         <div>
             {arrayOfFood.map((item) =>
                 <div>
-                    {item.itemName}
+                    <button key={item.id} onClick={() => addFoodToOrder(item.itemName, item.price)}>{item.itemName}</button>
                 </div>
             )}
         </div>
