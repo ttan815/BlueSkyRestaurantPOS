@@ -10,6 +10,6 @@
         public decimal PriceChange { get; set; }
         public string? Description { get; set; }
         public string? Option { get; set; }
-        public CustomerOrderItemModel CustomerOrderItem{ get; set; } = null!;
+        public CustomerOrderItemModel? CustomerOrderItem{ get; set; } = null!;
     }
 }

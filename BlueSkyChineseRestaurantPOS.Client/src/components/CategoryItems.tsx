@@ -11,10 +11,10 @@ interface itemCustomizationConstruct {
 interface foodItemConstruct {
     id: number
     itemName: string,
-    chineseItemname: string,
+    chineseItemName: string,
     price: number,
     orderedAmount: number,
-    menuItemCustomization: itemCustomizationConstruct[]
+    menuItemCustomizations: itemCustomizationConstruct[]
     toGo: boolean
 }
 interface foodItemInfo {

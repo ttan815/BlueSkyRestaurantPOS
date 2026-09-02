@@ -36,12 +36,12 @@ function Takeout() {
         description: string
     }
     interface foodItemConstruct {
-        id: number
+        id: number,
         itemName: string,
-        chineseItemname: string,
+        chineseItemName: string,
         price: number,
         orderedAmount: number,
-        menuItemCustomization: itemCustomizationConstruct[]
+        menuItemCustomizations: itemCustomizationConstruct[]
         toGo: boolean
     }
 
@@ -155,7 +155,7 @@ function Takeout() {
             if (item.id === selectedItemID) {
                 return {
                     ...item,
-                    menuItemCustomization: [
+                    menuItemCustomizations: [
                         ...itemCustomization
                     ]
                 };
@@ -173,10 +173,10 @@ function Takeout() {
         const foodItem = {
             id: itemID,
             itemName: foodName,
-            chineseItemname: "?",
+            chineseItemName: "?",
             price: foodPrice,
             orderedAmount: itemCount,
-            menuItemCustomization: itemCustomization,
+            menuItemCustomizations: itemCustomization,
             toGo: false
         }
         setOrderedItems([...orderedItems, foodItem]);
@@ -205,15 +205,15 @@ function Takeout() {
         }
         if (selectedItem) {
             setModifyItemScreenStatus(true)
-            setItemCustomization(selectedItem.menuItemCustomization)
+            setItemCustomization(selectedItem.menuItemCustomizations)
         }
     }
     const order = {
         orderTime: new Date().toISOString(),
-        orderList: orderedItems,
+        customerOrderItems: orderedItems,
         discountPercent: discountPercent,
         discountConstant: discountConstant,
-        subtotal: subtotal,
+        subTotal: subtotal,
         tax: tax,
         total: total
     }
@@ -286,7 +286,7 @@ function Takeout() {
                                 </button>
                             }
                             {
-                                item.menuItemCustomization.map(customization =>
+                                item.menuItemCustomizations.map(customization =>
                                     <div key={customization.id}>
                                         <button >
                                             <p>{customization.modification}</p>
